@@ -1,6 +1,6 @@
 # ms-docker
 
-Docker 部署服务. 
+Docker服务. 
 
 
 
