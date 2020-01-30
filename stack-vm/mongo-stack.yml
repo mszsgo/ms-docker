@@ -1,0 +1,129 @@
+version: '3.6'
+
+# 使用docker stack 搭建 Mongodb 分片集群
+# 部署：docker stack deploy --compose-file=mongo-stack.yml mongo
+
+services:
+  ######################################################################################################################
+  ## replSet: cfgrs   端口：27019  ，3副本
+  cfgrs1:
+    image: mongo:4.2
+    command: mongod --configsvr --replSet cfgrs #--keyFile /data/configdb/keyFile.private
+    networks:
+      - cluster
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - cfgrs1:/data/configdb/
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.hostname==node1
+  cfgrs2:
+    image: mongo:4.2
+    command: mongod --configsvr --replSet cfgrs #--keyFile /data/configdb/keyFile.private
+    networks:
+      - cluster
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - cfgrs2:/data/configdb/
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.hostname==node2
+  cfgrs3:
+    image: mongo:4.2
+    command: mongod --configsvr --replSet cfgrs #--keyFile /data/configdb/keyFile.private
+    networks:
+      - cluster
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - cfgrs3:/data/configdb/
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.hostname==node2
+  # "echo 'rs.initiate({_id: \"cfgrs\",configsvr: true, members: [{ _id : 1, host : \"cfgrs1\" },{ _id : 2, host : \"cfgrs2\" }, { _id : 3, host : \"cfgrs3\" }]})' | mongo"
+
+  ######################################################################################################################
+  ## replSet: sharda  端口：27018    2副本，1仲裁
+  sharda1:
+    image: mongo:4.2
+    command: mongod --shardsvr --replSet sharda #--keyFile /data/db/keyFile.private
+    networks:
+      - cluster
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - sharda1:/data/db/
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.hostname==node1
+  sharda2:
+    image: mongo:4.2
+    command: mongod --shardsvr --replSet sharda #--keyFile /data/db/keyFile.private
+    networks:
+      - cluster
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - sharda2:/data/db/
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.hostname==node2
+  sharda3:
+    image: mongo:4.2
+    command: mongod --shardsvr --replSet sharda #--keyFile /data/db/keyFile.private
+    networks:
+      - cluster
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - sharda3:/data/db/
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.hostname==node2
+  # "echo 'rs.initiate({_id: \"cfgrs\",configsvr: true, members: [{ _id : 1, host : \"cfgrs1\" },{ _id : 2, host : \"cfgrs2\" }, { _id : 3, host : \"cfgrs3\" }]})' | mongo"
+
+  ######################################################################################################################
+  ## 路由  端口：27017
+  mongos1:
+    image: mongo:4.2
+    command: mongos --bind_ip_all --configdb cfgrs/cfgrs1:27019,cfgrs2:27019,cfgrs3:27019 #--keyFile /data/db/keyFile.private
+    networks:
+      - cluster
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - mongos1:/data/db/
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.hostname==node1
+
+networks:
+  cluster:
+    driver: overlay
+    attachable: true
+
+volumes:
+  cfgrs1:
+  cfgrs2:
+  cfgrs3:
+  sharda1:
+  sharda2:
+  sharda3:
+  mongos1:
+

@@ -1,0 +1,26 @@
+version: '3.6'
+
+# 部署：docker stack deploy --compose-file=test-stack.yml test
+
+services:
+  proxy:
+    image: "nginx:1.17-alpine"
+    environment:
+      - TZ=Asia/Shanghai
+    ports:
+      - "8880:80"
+      - "8443:443"
+    networks:
+      - cluster
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.hostname == node2]
+
+networks:
+  cluster:
+    driver: overlay
+    attachable: true
+
+
