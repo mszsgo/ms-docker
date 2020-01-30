@@ -10,11 +10,12 @@ services:
     image: mongo:4.2
     command: mongod --configsvr --replSet cfgrs #--keyFile /data/configdb/keyFile.private
     networks:
-      - cluster
+      - stack
     environment:
       - TZ=Asia/Shanghai
     volumes:
       - cfgrs1:/data/configdb/
+      - invalid:/data/db/
     deploy:
       replicas: 1
       placement:
@@ -24,11 +25,12 @@ services:
     image: mongo:4.2
     command: mongod --configsvr --replSet cfgrs #--keyFile /data/configdb/keyFile.private
     networks:
-      - cluster
+      - stack
     environment:
       - TZ=Asia/Shanghai
     volumes:
       - cfgrs2:/data/configdb/
+      - invalid:/data/db/
     deploy:
       replicas: 1
       placement:
@@ -38,11 +40,12 @@ services:
     image: mongo:4.2
     command: mongod --configsvr --replSet cfgrs #--keyFile /data/configdb/keyFile.private
     networks:
-      - cluster
+      - stack
     environment:
       - TZ=Asia/Shanghai
     volumes:
       - cfgrs3:/data/configdb/
+      - invalid:/data/db/
     deploy:
       replicas: 1
       placement:
@@ -56,11 +59,12 @@ services:
     image: mongo:4.2
     command: mongod --shardsvr --replSet sharda #--keyFile /data/db/keyFile.private
     networks:
-      - cluster
+      - stack
     environment:
       - TZ=Asia/Shanghai
     volumes:
       - sharda1:/data/db/
+      - invalid:/data/configdb/
     deploy:
       replicas: 1
       placement:
@@ -70,11 +74,12 @@ services:
     image: mongo:4.2
     command: mongod --shardsvr --replSet sharda #--keyFile /data/db/keyFile.private
     networks:
-      - cluster
+      - stack
     environment:
       - TZ=Asia/Shanghai
     volumes:
       - sharda2:/data/db/
+      - invalid:/data/configdb/
     deploy:
       replicas: 1
       placement:
@@ -84,11 +89,12 @@ services:
     image: mongo:4.2
     command: mongod --shardsvr --replSet sharda #--keyFile /data/db/keyFile.private
     networks:
-      - cluster
+      - stack
     environment:
       - TZ=Asia/Shanghai
     volumes:
       - sharda3:/data/db/
+      - invalid:/data/configdb/
     deploy:
       replicas: 1
       placement:
@@ -102,23 +108,52 @@ services:
     image: mongo:4.2
     command: mongos --bind_ip_all --configdb cfgrs/cfgrs1:27019,cfgrs2:27019,cfgrs3:27019 #--keyFile /data/db/keyFile.private
     networks:
-      - cluster
+      - stack
     environment:
       - TZ=Asia/Shanghai
+    ports:
+      - "27017:27017"
     volumes:
       - mongos1:/data/db/
+      - invalid:/data/configdb/
     deploy:
       replicas: 1
       placement:
         constraints:
           - node.hostname==node1
+    depends_on:
+      - cfgrs1
+      - cfgrs2
+      - cfgrs3
+  mongos2:
+    image: mongo:4.2
+    command: mongos --bind_ip_all --configdb cfgrs/cfgrs1:27019,cfgrs2:27019,cfgrs3:27019 #--keyFile /data/db/keyFile.private
+    networks:
+      - stack
+    environment:
+      - TZ=Asia/Shanghai
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongos2:/data/db/
+      - invalid:/data/configdb/
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.hostname==node2
+    depends_on:
+      - cfgrs1
+      - cfgrs2
+      - cfgrs3
 
 networks:
-  cluster:
+  stack:
     driver: overlay
     attachable: true
 
 volumes:
+  invalid:
   cfgrs1:
   cfgrs2:
   cfgrs3:
@@ -126,4 +161,6 @@ volumes:
   sharda2:
   sharda3:
   mongos1:
+  mongos2:
 
+# ****** END ******
