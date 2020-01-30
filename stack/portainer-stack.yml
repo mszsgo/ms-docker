@@ -38,3 +38,4 @@ volumes:
 
 # 文档：https://portainer.readthedocs.io/en/latest/index.html
 # 部署：docker stack deploy --compose-file=portainer-stack.yml portainer
+# 自动创建独立的网络、数据卷、服务、容器，前缀为stack名字：portainer

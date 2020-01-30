@@ -1,4 +1,7 @@
+
+
 ## 本地Centos7虚拟机Docker swarm环境配置
+
 ```
 * 创建集群节点
 docker swarm init --advertise-addr 172.17.193.184

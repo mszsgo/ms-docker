@@ -1,0 +1,34 @@
+version: '3.6'
+
+# 部署：docker stack deploy --compose-file=nginx-proxy-stack.yml nginx
+
+services:
+  proxy:
+    image: "nginx:1.17-alpine"
+    environment:
+      - TZ=Asia/Shanghai
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - cluster
+    volumes:
+      - conf:/etc/nginx/
+      - logs:/var/log/nginx/
+      - html:/usr/share/nginx/html/
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+
+networks:
+  cluster:
+    driver: overlay
+    attachable: true
+
+volumes:
+  conf:
+  html:
+  logs:
+
