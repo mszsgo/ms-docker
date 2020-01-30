@@ -1,0 +1,121 @@
+version: '3.6'
+
+# 使用docker stack 搭建 Mongodb 分片集群
+# 1. 部署：docker stack deploy --compose-file=mongo-stack.1.yml mongo
+# 2. 连接节点： docker exec -it cfgrs1.1 /bin/bash , 初始化cfgrs副本集
+# 3. 连接节点： docker exec -it sharda1.1 /bin/bash , 初始化sharda副本集 ，可扩展shardb、shardc、shardd、sharde、shardf、ghijklmnopqrstuvwxyz
+# 4. 设置副本集管理密码
+# 5. 部署：docker stack deploy --compose-file=mongo-stack.2.yml mongo ，启用密码验证
+
+services:
+  ######################################################################################################################
+  ## replSet: cfgrs   端口：27019  ，3副本
+  cfgrs1:
+    image: mongo:4.2
+    command: mongod --configsvr --replSet cfgrs
+    networks:
+      - stack
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - cfgrs1:/data/configdb/
+      - invalid:/data/db/
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.hostname==node1
+  cfgrs2:
+    image: mongo:4.2
+    command: mongod --configsvr --replSet cfgrs
+    networks:
+      - stack
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - cfgrs2:/data/configdb/
+      - invalid:/data/db/
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.hostname==node2
+  cfgrs3:
+    image: mongo:4.2
+    command: mongod --configsvr --replSet cfgrs
+    networks:
+      - stack
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - cfgrs3:/data/configdb/
+      - invalid:/data/db/
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.hostname==node2
+
+  ######################################################################################################################
+  ## replSet: sharda  端口：27018    2副本，1仲裁
+  sharda1:
+    image: mongo:4.2
+    command: mongod --shardsvr --replSet sharda
+    networks:
+      - stack
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - sharda1:/data/db/
+      - invalid:/data/configdb/
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.hostname==node1
+  sharda2:
+    image: mongo:4.2
+    command: mongod --shardsvr --replSet sharda
+    networks:
+      - stack
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - sharda2:/data/db/
+      - invalid:/data/configdb/
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.hostname==node2
+  sharda3:
+    image: mongo:4.2
+    command: mongod --shardsvr --replSet sharda
+    networks:
+      - stack
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - sharda3:/data/db/
+      - invalid:/data/configdb/
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.hostname==node2
+
+networks:
+  stack:
+    driver: overlay
+    attachable: true
+
+volumes:
+  invalid:
+  cfgrs1:
+  cfgrs2:
+  cfgrs3:
+  sharda1:
+  sharda2:
+  sharda3:
+
+# ****** END ******

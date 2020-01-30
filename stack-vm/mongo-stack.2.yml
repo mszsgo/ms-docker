@@ -1,14 +1,27 @@
 version: '3.6'
 
 # 使用docker stack 搭建 Mongodb 分片集群
-# 部署：docker stack deploy --compose-file=mongo-stack.yml mongo
+# 需要先确保mongo-stack.1.yml部署与配置正常
+
+# 创建 KeyFile.private
+# docker run --rm -v mongo_cfgrs1:/dbkey/ -it mongo:4.2 echo 'YFey4AITXoKBMOE7O9Yw65sQ9UDf4y7MnwjwNrnOcFXYtv70QHdzsYyoUVZMOnMS'>/dbkey/keyFile.private && chmod 600 /dbkey/keyFile.private
+# docker run --rm -v mongo_cfgrs2:/dbkey/ -it mongo:4.2 echo 'YFey4AITXoKBMOE7O9Yw65sQ9UDf4y7MnwjwNrnOcFXYtv70QHdzsYyoUVZMOnMS'>/dbkey/keyFile.private && chmod 600 /dbkey/keyFile.private
+# docker run --rm -v mongo_cfgrs3:/dbkey/ -it mongo:4.2 echo 'YFey4AITXoKBMOE7O9Yw65sQ9UDf4y7MnwjwNrnOcFXYtv70QHdzsYyoUVZMOnMS'>/dbkey/keyFile.private && chmod 600 /dbkey/keyFile.private
+
+# docker run --rm -v mongo_mongos1:/dbkey/ -it mongo:4.2 echo 'YFey4AITXoKBMOE7O9Yw65sQ9UDf4y7MnwjwNrnOcFXYtv70QHdzsYyoUVZMOnMS'>/dbkey/keyFile.private && chmod 600 /dbkey/keyFile.private
+# docker run --rm -v mongo_mongos2:/dbkey/ -it mongo:4.2 echo 'YFey4AITXoKBMOE7O9Yw65sQ9UDf4y7MnwjwNrnOcFXYtv70QHdzsYyoUVZMOnMS'>/dbkey/keyFile.private && chmod 600 /dbkey/keyFile.private
+
+# docker run --rm -v mongo_sharda1:/dbkey/ -it mongo:4.2 echo 'YFey4AITXoKBMOE7O9Yw65sQ9UDf4y7MnwjwNrnOcFXYtv70QHdzsYyoUVZMOnMS'>/dbkey/keyFile.private && chmod 600 /dbkey/keyFile.private
+# docker run --rm -v mongo_sharda2:/dbkey/ -it mongo:4.2 echo 'YFey4AITXoKBMOE7O9Yw65sQ9UDf4y7MnwjwNrnOcFXYtv70QHdzsYyoUVZMOnMS'>/dbkey/keyFile.private && chmod 600 /dbkey/keyFile.private
+# docker run --rm -v mongo_sharda3:/dbkey/ -it mongo:4.2 echo 'YFey4AITXoKBMOE7O9Yw65sQ9UDf4y7MnwjwNrnOcFXYtv70QHdzsYyoUVZMOnMS'>/dbkey/keyFile.private && chmod 600 /dbkey/keyFile.private
+
 
 services:
   ######################################################################################################################
   ## replSet: cfgrs   端口：27019  ，3副本
   cfgrs1:
     image: mongo:4.2
-    command: mongod --configsvr --replSet cfgrs #--keyFile /data/configdb/keyFile.private
+    command: mongod --configsvr --replSet cfgrs --keyFile /data/configdb/keyFile.private
     networks:
       - stack
     environment:
@@ -23,7 +36,7 @@ services:
           - node.hostname==node1
   cfgrs2:
     image: mongo:4.2
-    command: mongod --configsvr --replSet cfgrs #--keyFile /data/configdb/keyFile.private
+    command: mongod --configsvr --replSet cfgrs --keyFile /data/configdb/keyFile.private
     networks:
       - stack
     environment:
@@ -38,7 +51,7 @@ services:
           - node.hostname==node2
   cfgrs3:
     image: mongo:4.2
-    command: mongod --configsvr --replSet cfgrs #--keyFile /data/configdb/keyFile.private
+    command: mongod --configsvr --replSet cfgrs --keyFile /data/configdb/keyFile.private
     networks:
       - stack
     environment:
@@ -51,13 +64,12 @@ services:
       placement:
         constraints:
           - node.hostname==node2
-  # "echo 'rs.initiate({_id: \"cfgrs\",configsvr: true, members: [{ _id : 1, host : \"cfgrs1\" },{ _id : 2, host : \"cfgrs2\" }, { _id : 3, host : \"cfgrs3\" }]})' | mongo"
 
   ######################################################################################################################
   ## replSet: sharda  端口：27018    2副本，1仲裁
   sharda1:
     image: mongo:4.2
-    command: mongod --shardsvr --replSet sharda #--keyFile /data/db/keyFile.private
+    command: mongod --shardsvr --replSet sharda --keyFile /data/db/keyFile.private
     networks:
       - stack
     environment:
@@ -72,7 +84,7 @@ services:
           - node.hostname==node1
   sharda2:
     image: mongo:4.2
-    command: mongod --shardsvr --replSet sharda #--keyFile /data/db/keyFile.private
+    command: mongod --shardsvr --replSet sharda --keyFile /data/db/keyFile.private
     networks:
       - stack
     environment:
@@ -87,7 +99,7 @@ services:
           - node.hostname==node2
   sharda3:
     image: mongo:4.2
-    command: mongod --shardsvr --replSet sharda #--keyFile /data/db/keyFile.private
+    command: mongod --shardsvr --replSet sharda --keyFile /data/db/keyFile.private
     networks:
       - stack
     environment:
@@ -100,13 +112,12 @@ services:
       placement:
         constraints:
           - node.hostname==node2
-  # "echo 'rs.initiate({_id: \"cfgrs\",configsvr: true, members: [{ _id : 1, host : \"cfgrs1\" },{ _id : 2, host : \"cfgrs2\" }, { _id : 3, host : \"cfgrs3\" }]})' | mongo"
 
   ######################################################################################################################
   ## 路由  端口：27017
   mongos1:
     image: mongo:4.2
-    command: mongos --bind_ip_all --configdb cfgrs/cfgrs1:27019,cfgrs2:27019,cfgrs3:27019 #--keyFile /data/db/keyFile.private
+    command: mongos --bind_ip_all --configdb cfgrs/cfgrs1:27019,cfgrs2:27019,cfgrs3:27019 --keyFile /data/db/keyFile.private
     networks:
       - stack
     environment:
@@ -127,7 +138,7 @@ services:
       - cfgrs3
   mongos2:
     image: mongo:4.2
-    command: mongos --bind_ip_all --configdb cfgrs/cfgrs1:27019,cfgrs2:27019,cfgrs3:27019 #--keyFile /data/db/keyFile.private
+    command: mongos --bind_ip_all --configdb cfgrs/cfgrs1:27019,cfgrs2:27019,cfgrs3:27019 --keyFile /data/db/keyFile.private
     networks:
       - stack
     environment:
