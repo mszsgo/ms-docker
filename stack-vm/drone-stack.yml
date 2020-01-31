@@ -21,6 +21,7 @@ services:
       - stack
     volumes:
       - data:/data
+      - /etc/localtime:/etc/localtime
     ports:
       - "3080:80"
       - "3443:443"
@@ -43,6 +44,7 @@ services:
       - stack
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+      - /etc/localtime:/etc/localtime
     deploy:
       mode: replicated
       replicas: 1
