@@ -1,4 +1,30 @@
 version: '3.6'
 
+# 业务服务部署
 services:
-  nginx:
+  config:
+    image: "mszs/config:1.0.0"
+    networks: [cluster]
+    deploy:
+      mode: replicated
+      replicas: 1
+  gateway:
+    image: "mszs/gateway:1.0.0"
+    networks: [cluster]
+    deploy:
+      mode: replicated
+      replicas: 1
+    depends_on: [config]
+  member:
+    image: "mszs/member:1.0.0"
+    networks: [cluster]
+    deploy:
+      mode: replicated
+      replicas: 1
+    depends_on: [config]
+
+networks:
+  cluster:
+    driver: overlay
+    attachable: true
+
