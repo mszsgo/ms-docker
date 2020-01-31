@@ -11,7 +11,7 @@ services:
       - "80:80"
       - "443:443"
     networks:
-      - cluster
+      - stack
     volumes:
       - conf:/etc/nginx/
       - logs:/var/log/nginx/
@@ -23,7 +23,7 @@ services:
         constraints: [node.role == manager]
 
 networks:
-  cluster:
+  stack:
     driver: overlay
     attachable: true
 

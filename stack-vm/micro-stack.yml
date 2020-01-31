@@ -4,27 +4,27 @@ version: '3.6'
 services:
   config:
     image: "mszs/config:1.0.0"
-    networks: [cluster]
+    networks: [stack]
     deploy:
       mode: replicated
       replicas: 1
   gateway:
     image: "mszs/gateway:1.0.0"
-    networks: [cluster]
+    networks: [stack]
     deploy:
       mode: replicated
       replicas: 1
     depends_on: [config]
   member:
     image: "mszs/member:1.0.0"
-    networks: [cluster]
+    networks: [stack]
     deploy:
       mode: replicated
       replicas: 1
     depends_on: [config]
 
 networks:
-  cluster:
+  stack:
     driver: overlay
     attachable: true
 
