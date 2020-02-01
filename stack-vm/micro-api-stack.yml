@@ -1,6 +1,6 @@
 version: '3.6'
 
-# MicroService Deploy
+# MicroService Deploy API
 # docker stack deploy -c micro-stack.yml micro
 
 services:
