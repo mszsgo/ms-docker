@@ -4,21 +4,14 @@ version: '3.6'
 # docker stack deploy -c micro-stack.yml micro
 
 services:
-  # 配置中心
-  config:
-    image: "mszs/config:1.0.0"
+  # HTTP代理
+  proxy:
+    image: "registry.cn-hangzhou.aliyuncs.com/mszs/proxy:latest"
     networks: [stack]
     deploy:
       mode: replicated
       replicas: 1
-  # 服务网关
-  gateway:
-    image: "mszs/gateway:1.0.0"
-    networks: [stack]
-    deploy:
-      mode: replicated
-      replicas: 1
-    depends_on: [config]
+
   # 短信服务
   # 邮件服务
   # 验证码服务
