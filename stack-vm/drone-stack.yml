@@ -10,20 +10,20 @@ version: '3.6'
 # 94fac34927b1fdbe184bd647f8229263
 
 services:
+  # Drone Server
   drone:
     image: drone/drone:1
     environment:
-      - TZ=Asia/Shanghai
       - DRONE_AGENTS_ENABLED=true
       - DRONE_GOGS_SERVER=http://172.17.193.184:3000
       - DRONE_RPC_SECRET=94fac34927b1fdbe184bd647f8229263
       - DRONE_SERVER_PROTO=http
       - DRONE_SERVER_HOST=172.17.193.184:3080
+      - DRONE_USER_CREATE=username:zengs,admin:true
     networks:
       - stack
     volumes:
       - data:/data
-      - /etc/localtime:/etc/localtime
     ports:
       - "3080:80"
       - "3443:443"
@@ -33,10 +33,10 @@ services:
       placement:
         constraints:
           - node.hostname==node2
+  # Drone Runner
   runner:
     image: drone/drone-runner-docker:1
     environment:
-      - TZ=Asia/Shanghai
       - DRONE_RPC_PROTO=http
       - DRONE_RPC_HOST=drone
       - DRONE_RPC_SECRET=94fac34927b1fdbe184bd647f8229263
@@ -46,7 +46,6 @@ services:
       - stack
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - /etc/localtime:/etc/localtime
     deploy:
       mode: replicated
       replicas: 1
@@ -58,4 +57,3 @@ networks:
 
 volumes:
   data:
-
