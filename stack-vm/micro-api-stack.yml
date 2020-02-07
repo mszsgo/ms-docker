@@ -8,6 +8,8 @@ services:
   proxy:
     image: "registry.cn-hangzhou.aliyuncs.com/mszs/proxy:latest"
     networks: [stack]
+    ports:
+      - "39084:39084"
     deploy:
       mode: replicated
       replicas: 1
