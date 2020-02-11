@@ -15,10 +15,10 @@ services:
     image: drone/drone:1
     environment:
       - DRONE_AGENTS_ENABLED=true
-      - DRONE_GOGS_SERVER=http://172.17.193.184:3000
+      - DRONE_GOGS_SERVER=http://git.umq.cn
       - DRONE_RPC_SECRET=94fac34927b1fdbe184bd647f8229263
       - DRONE_SERVER_PROTO=http
-      - DRONE_SERVER_HOST=172.17.193.184:3080
+      - DRONE_SERVER_HOST=192.168.200.112:3080
       - DRONE_USER_CREATE=username:zengs,admin:true
     networks:
       - stack
@@ -26,13 +26,12 @@ services:
       - data:/data
     ports:
       - "3080:80"
-      - "3443:443"
     deploy:
       mode: replicated
       replicas: 1
       placement:
         constraints:
-          - node.hostname==node2
+          - node.hostname==localhost.node112
   # Drone Runner
   runner:
     image: drone/drone-runner-docker:1
@@ -57,3 +56,15 @@ networks:
 
 volumes:
   data:
+
+
+
+# Drone Cli
+# export DRONE_SERVER=http://drone
+# export DRONE_TOKEN=UXsqjDqcoyooDtk9mc1qvZfUEerL4P2E
+# drone info
+# docker run --network drone_stack -e DRONE_SERVER=http://drone -e DRONE_TOKEN=k72FHEmf3e30IJd70Yg7vcLAQYVmCMNU --rm -it drone/cli info
+# docker run --network drone_stack -e DRONE_SERVER=http://drone -e DRONE_TOKEN=k72FHEmf3e30IJd70Yg7vcLAQYVmCMNU --rm -it drone/cli orgsecret add zengs sshhost 192.168.200.112
+# docker run --network drone_stack -e DRONE_SERVER=http://drone -e DRONE_TOKEN=k72FHEmf3e30IJd70Yg7vcLAQYVmCMNU --rm -it drone/cli orgsecret add zengs sshport 22
+# docker run --network drone_stack -e DRONE_SERVER=http://drone -e DRONE_TOKEN=k72FHEmf3e30IJd70Yg7vcLAQYVmCMNU --rm -it drone/cli orgsecret add zengs sshname root
+# docker run --network drone_stack -e DRONE_SERVER=http://drone -e DRONE_TOKEN=k72FHEmf3e30IJd70Yg7vcLAQYVmCMNU --rm -it drone/cli orgsecret add zengs sshpass root

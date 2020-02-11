@@ -1,6 +1,7 @@
 version: '3.6'
 
 # 官网：https://gogs.io
+# 镜像：https://hub.docker.com/r/gogs/gogs
 # 部署：docker stack deploy --compose-file=gogs-stack.yml gogs
 
 # 部署完成后，使用WEB管理界面配置服务，第一个注册用户为管理员用户。
@@ -22,7 +23,7 @@ services:
       replicas: 1
       placement:
         constraints:
-          - node.hostname==node2
+          - node.hostname==localhost.node110
 
 networks:
   stack:
