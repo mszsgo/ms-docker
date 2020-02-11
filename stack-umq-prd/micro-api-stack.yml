@@ -1,0 +1,31 @@
+version: '3.6'
+
+# MicroService Deploy API
+# docker stack deploy -c micro-stack.yml micro
+
+services:
+  # HTTP代理
+  proxy:
+    image: "registry.cn-hangzhou.aliyuncs.com/mszs/proxy:1.0.0"
+    networks: [stack]
+    ports:
+      - "39084:39084"
+    deploy:
+      mode: replicated
+      replicas: 1
+
+  # 短信服务
+  # 邮件服务
+  # 验证码服务
+  # 会员服务
+  # 机构服务
+  # 储值账户
+  # 积分账户
+  # 收银服务
+  # 电子卡券
+
+networks:
+  stack:
+    driver: overlay
+    attachable: true
+

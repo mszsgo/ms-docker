@@ -1,0 +1,43 @@
+version: '3.6'
+
+services:
+  agent:
+    image: portainer/agent:1.5.1
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /docker/volumes:/var/lib/docker/volumes
+    networks:
+      - stack
+    deploy:
+      mode: global
+      placement:
+        constraints: [node.platform.os == linux]
+
+  portainer:
+    image: portainer/portainer:1.23.0
+    command: -H tcp://tasks.agent:9001 --tlsskipverify
+    ports:
+      - "9000:9000"
+    volumes:
+      - portainer:/data
+    networks:
+      - stack
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+
+networks:
+  stack:
+    driver: overlay
+    attachable: true
+
+volumes:
+  portainer:
+
+# 文档：https://portainer.readthedocs.io/en/latest/index.html
+# 部署：docker stack deploy --compose-file=portainer-stack.yml portainer
+# 自动创建独立的网络、数据卷、服务、容器，前缀为stack名字：portainer
+# 管理员账号密码：admin/1qaz2wsx
+
