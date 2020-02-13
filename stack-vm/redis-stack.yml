@@ -1,0 +1,9 @@
+# Redis 高可用集群
+
+
+# 跨网络访问使用代理：https://github.com/joyieldInc/predixy
+# Client: https://github.com/go-redis/redis
+
+
+# Redis cluster
+# 6节点
