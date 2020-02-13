@@ -4,7 +4,7 @@ version: '3.6'
 # docker stack deploy -c micro-stack.yml micro
 
 services:
-  # HTTP代理
+  # HTTP代理，通过代理访问子网服务
   proxy:
     image: "registry.cn-hangzhou.aliyuncs.com/mszs/proxy:latest"
     networks: [stack]
@@ -32,6 +32,13 @@ services:
   # 会员服务
   member:
     image: "registry.cn-hangzhou.aliyuncs.com/mszs/member:latest"
+    networks: [stack]
+    deploy:
+      mode: replicated
+      replicas: 1
+  # 机构服务
+  org:
+    image: "registry.cn-hangzhou.aliyuncs.com/mszs/org:latest"
     networks: [stack]
     deploy:
       mode: replicated
@@ -71,16 +78,6 @@ services:
     deploy:
       mode: replicated
       replicas: 1
-
-  # 短信服务
-  # 邮件服务
-  # 验证码服务
-  # 会员服务
-  # 机构服务
-  # 储值账户
-  # 积分账户
-  # 收银服务
-  # 电子卡券
 
 networks:
   stack:
