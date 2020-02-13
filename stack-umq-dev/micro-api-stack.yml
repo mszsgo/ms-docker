@@ -29,6 +29,13 @@ services:
     deploy:
       mode: replicated
       replicas: 1
+  # 会员服务
+  member:
+    image: "registry.cn-hangzhou.aliyuncs.com/mszs/member:latest"
+    networks: [stack]
+    deploy:
+      mode: replicated
+      replicas: 1
 
   # 短信服务
   # 邮件服务
