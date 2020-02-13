@@ -36,6 +36,41 @@ services:
     deploy:
       mode: replicated
       replicas: 1
+  # 商城服务
+  mall:
+    image: "registry.cn-hangzhou.aliyuncs.com/mszs/mall:latest"
+    networks: [stack]
+    deploy:
+      mode: replicated
+      replicas: 1
+  # 订单服务
+  order:
+    image: "registry.cn-hangzhou.aliyuncs.com/mszs/order:latest"
+    networks: [stack]
+    deploy:
+      mode: replicated
+      replicas: 1
+  # 现金账户
+  cash:
+    image: "registry.cn-hangzhou.aliyuncs.com/mszs/cash:latest"
+    networks: [stack]
+    deploy:
+      mode: replicated
+      replicas: 1
+  # 短信服务
+  sms:
+    image: "registry.cn-hangzhou.aliyuncs.com/mszs/sms:latest"
+    networks: [stack]
+    deploy:
+      mode: replicated
+      replicas: 1
+  # 邮件服务
+  email:
+    image: "registry.cn-hangzhou.aliyuncs.com/mszs/email:latest"
+    networks: [stack]
+    deploy:
+      mode: replicated
+      replicas: 1
 
   # 短信服务
   # 邮件服务
