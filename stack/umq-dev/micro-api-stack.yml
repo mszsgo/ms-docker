@@ -28,6 +28,8 @@ services:
         condition: on-failure
         delay: 10s
         max_attempts: 3
+    command:
+      - /config --mongo=mongodb://unionlive:unionlive@192.168.200.112:27017/unionlive?authSource=admin&authMechanism=SCRAM-SHA-1
   # 验证码服务
   gateway:
     image: "registry.cn-hangzhou.aliyuncs.com/mszs/gateway:latest"
