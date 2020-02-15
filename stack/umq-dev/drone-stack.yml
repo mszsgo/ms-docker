@@ -2,7 +2,7 @@ version: '3.6'
 
 # 官网：https://drone.io/
 # 文档：https://docs.drone.io/
-# 插件：http://plugins.drone.io/appleboy/
+# 插件：http://plugins.drone.io
 # 部署：docker stack deploy --compose-file=drone-stack.yml drone
 
 # 生成Drone通信RPC_SECRET

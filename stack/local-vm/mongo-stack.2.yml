@@ -15,6 +15,7 @@ version: '3.6'
 # docker run --rm -v mongo_sharda2:/dbkey/ -it mongo:4.2 echo 'YFey4AITXoKBMOE7O9Yw65sQ9UDf4y7MnwjwNrnOcFXYtv70QHdzsYyoUVZMOnMS'>/dbkey/keyFile.private && chmod 600 /dbkey/keyFile.private
 # docker run --rm -v mongo_sharda3:/dbkey/ -it mongo:4.2 echo 'YFey4AITXoKBMOE7O9Yw65sQ9UDf4y7MnwjwNrnOcFXYtv70QHdzsYyoUVZMOnMS'>/dbkey/keyFile.private && chmod 600 /dbkey/keyFile.private
 
+# 使用secrets创建keyFile.private ,待测试
 
 services:
   ######################################################################################################################
