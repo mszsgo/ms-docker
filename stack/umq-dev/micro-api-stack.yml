@@ -119,6 +119,17 @@ services:
         condition: on-failure
         delay: 10s
         max_attempts: 3
+  # 积分账户
+  points:
+    image: "registry.cn-hangzhou.aliyuncs.com/mszs/points:latest"
+    networks: [stack]
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 10s
+        max_attempts: 3
 
 networks:
   stack:
