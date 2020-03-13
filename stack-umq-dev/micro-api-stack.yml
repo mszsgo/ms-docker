@@ -39,7 +39,11 @@ services:
   # 商城服务
   mall:
     image: "registry.cn-hangzhou.aliyuncs.com/mszs/mall:latest"
+    environment:
+      - TZ=Asia/Shanghai
     networks: [stack]
+    volumes:
+      - /etc/localtime:/etc/localtime
     deploy:
       mode: replicated
       replicas: 1
